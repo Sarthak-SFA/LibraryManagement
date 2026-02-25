@@ -1,0 +1,17 @@
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\bin\Debug\net10.0\LibraryManagementSystem.Services.deps.json
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\bin\Debug\net10.0\LibraryManagementSystem.Services.dll
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\bin\Debug\net10.0\LibraryManagementSystem.Services.pdb
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\bin\Debug\net10.0\LibraryManagementSystem.Core.dll
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\bin\Debug\net10.0\LibraryManagementSystem.Persistence.dll
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\bin\Debug\net10.0\LibraryManagementSystem.Core.pdb
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\bin\Debug\net10.0\LibraryManagementSystem.Persistence.pdb
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\LibraryManagementSystem.Services.csproj.AssemblyReference.cache
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\LibraryManagementSystem.Services.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\LibraryManagementSystem.Services.AssemblyInfoInputs.cache
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\LibraryManagementSystem.Services.AssemblyInfo.cs
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\LibraryManagementSystem.Services.csproj.CoreCompileInputs.cache
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\LibraryM.BCD7C036.Up2Date
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\LibraryManagementSystem.Services.dll
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\refint\LibraryManagementSystem.Services.dll
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\LibraryManagementSystem.Services.pdb
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Services\obj\Debug\net10.0\ref\LibraryManagementSystem.Services.dll
