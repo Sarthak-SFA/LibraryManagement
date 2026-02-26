@@ -9,3 +9,4 @@ C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.C
 C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Core\obj\Debug\net10.0\refint\LibraryManagementSystem.Core.dll
 C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Core\obj\Debug\net10.0\LibraryManagementSystem.Core.pdb
 C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Core\obj\Debug\net10.0\ref\LibraryManagementSystem.Core.dll
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Core\obj\Debug\net10.0\LibraryManagementSystem.Core.sourcelink.json

@@ -10,8 +10,9 @@ public sealed class BookService
 
     public BookService(AppDbContext dbContext)
     {
-        _dbContext = dbContext?? throw new ArgumentNullException(nameof(dbContext)); 
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
+
     public IEnumerable<BookDto> GetAll()
     {
         return _dbContext.Books
@@ -25,6 +26,22 @@ public sealed class BookService
                 b.CategoryId
             ))
             .ToList();
+    }
+
+    public BookDto? GetById(int id)
+    {
+        return _dbContext.Books
+            .Include(b => b.Category)
+            .Where(b => b.Id == id)
+            .Select(b => new BookDto(
+                b.Id,
+                b.BookName,
+                b.AuthorName,
+                b.PublisherName,
+                b.BookPrice,
+                b.CategoryId
+            ))
+            .FirstOrDefault();
     }
 
     public IEnumerable<BookDto> Search(string keyword)
@@ -46,4 +63,18 @@ public sealed class BookService
             ))
             .ToList();
     }
-}
+    public IEnumerable<BookDto> GetAllByCategory(int categoryId)
+    {
+        return _dbContext.Books
+            .Where(b => b.CategoryId == categoryId)
+            .Select(b => new BookDto(
+                b.Id,
+                b.BookName,
+                b.AuthorName,
+                b.PublisherName,
+                b.BookPrice,
+                b.CategoryId
+            ))
+            .ToList();
+    }
+};

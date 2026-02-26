@@ -5,7 +5,7 @@ namespace LibraryManagementSystem.Persistence;
 public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     : DbContext(options)
 {
-    public DbSet<Book> Books { get; init; }
+    public DbSet<Book> Books => Set<Book>();
     public DbSet<Member> Member => Set<Member>();
     public DbSet<Category> Category => Set<Category>();
     public DbSet<BookIssue> BookIssue => Set<BookIssue>();

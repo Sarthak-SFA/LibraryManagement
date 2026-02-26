@@ -20,5 +20,6 @@ public sealed class IssueDto(
     public DateTime? ReturnDate { get; } = xReturnDate;
 
     public DateTime? RenewDate { get; } = xRenewDate;
+    
     public DateTime? RenewReturnDate { get; } = xRenewReturnDate;
 }

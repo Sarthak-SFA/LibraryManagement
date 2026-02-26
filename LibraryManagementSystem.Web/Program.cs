@@ -1,5 +1,4 @@
 using LibraryManagementSystem.Persistence;
-using LibraryManagementSystem.Services;
 using LibraryManagementSystem.Services.Services;
 using LibraryManagementSystem.Web.Endpoints;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services
     .AddScoped<BookService>()
-    .AddScoped<IssueService>();
+    .AddScoped<IssueService>()
+    .AddScoped<CategoryService>()
+    .AddScoped<MemberService>();
 
 var app = builder.Build();
 
@@ -28,7 +29,9 @@ app.UseHttpsRedirection();
 var apiGroup = app.MapGroup("api");
 // /api/master/books
 apiGroup.MapIssueEndpoints()
-    .MapBookEndpoints();
+    .MapBookEndpoints()
+    .MapCategoryEndpoints()
+    .MapMemberEndpoints();
 
 app.MapGet("/", () => $"Running in {app.Environment.EnvironmentName} right now.");
 

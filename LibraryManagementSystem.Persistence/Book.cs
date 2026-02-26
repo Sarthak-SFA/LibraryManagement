@@ -9,7 +9,9 @@ public sealed class Book
     public decimal BookPrice { get; set; }
 
     public int CategoryId { get; set; }
-    public Category? Category { get; set; }
+    //public Category? Category { get; set; }
 
     public IList<BookIssue> BookIssued { get; set; } = [];
+     public Category Category { get; set; }
+
 }

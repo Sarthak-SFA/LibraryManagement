@@ -13,12 +13,14 @@ public static class BookEndpoints
         ArgumentNullException.ThrowIfNull(endpoints);
         
         RouteGroupBuilder bookGroup = endpoints.MapMasterGroup().MapGroup("Books");
-        IEndpointRouteBuilder searchGroup = endpoints.MapMasterGroup().MapGroup("Search");
+        RouteGroupBuilder searchGroup = endpoints.MapMasterGroup().MapGroup("Search");
+       RouteGroupBuilder categoryGroup = endpoints.MapMasterGroup().MapGroup("categories");
 
         bookGroup.MapGet("", GetAllBooks);
-           
-
-        searchGroup.MapGet("search/{keyword}", Search);
+        bookGroup.MapGet("{id:int}", GetBookById);
+       searchGroup.MapGet("{keyword}", GetAllSearch);
+        categoryGroup.MapGet("{categoryId:int}/books", GetCategoryBooks);
+        
 
         return endpoints;
     }
@@ -26,10 +28,24 @@ public static class BookEndpoints
     {
         return TypedResults.Ok(service.GetAll());
     }
-
-    private static Ok<IEnumerable<BookDto>> Search(BookService service,[FromQuery] string keyword)
+    
+   private static IResult GetBookById(BookService service, int id)
     {
-        return TypedResults.Ok(service.Search( keyword));
+        var book = service.GetById(id);
+
+        if (book is null)
+            return TypedResults.NotFound();
+
+        return TypedResults.Ok(book);
+    }
+
+    private static Ok<IEnumerable<BookDto>> GetAllSearch(BookService service, string keyword)
+    {
+        return TypedResults.Ok(service.Search(keyword));
+    }
+    private static Ok<IEnumerable<BookDto>> GetCategoryBooks(BookService service, int categoryId)
+    {
+        return TypedResults.Ok(service.GetAllByCategory(categoryId));
     }
 
 }

@@ -10,3 +10,4 @@ C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.P
 C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Persistence\obj\Debug\net10.0\refint\LibraryManagementSystem.Persistence.dll
 C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Persistence\obj\Debug\net10.0\LibraryManagementSystem.Persistence.pdb
 C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Persistence\obj\Debug\net10.0\ref\LibraryManagementSystem.Persistence.dll
+C:\Users\Welcome\RiderProjects\LibraryManagementSystem\LibraryManagementSystem.Persistence\obj\Debug\net10.0\LibraryManagementSystem.Persistence.sourcelink.json
