@@ -2,6 +2,8 @@
 using LibraryManagementSystem.Persistence;
 using Microsoft.EntityFrameworkCore;
 
+using LibraryManagementSystem.Core.Requests;
+
 namespace LibraryManagementSystem.Services.Services;
 
 public sealed class BookService
@@ -15,7 +17,7 @@ public sealed class BookService
 
     public IEnumerable<BookDto> GetAll()
     {
-        return _dbContext.Books
+        return _dbContext.Book
             .Include(b => b.Category)
             .Select(b => new BookDto(
                 b.Id,
@@ -30,7 +32,7 @@ public sealed class BookService
 
     public BookDto? GetById(int id)
     {
-        return _dbContext.Books
+        return _dbContext.Book
             .Include(b => b.Category)
             .Where(b => b.Id == id)
             .Select(b => new BookDto(
@@ -48,7 +50,7 @@ public sealed class BookService
     {
         keyword = keyword.ToLower();
 
-        return _dbContext.Books
+        return _dbContext.Book
             .Include(b => b.Category)
             .Where(b =>
                 b.BookName.ToLower().Contains(keyword) ||
@@ -66,7 +68,7 @@ public sealed class BookService
 
     public IEnumerable<BookDto> GetAllByCategory(int categoryId)
     {
-        return _dbContext.Books
+        return _dbContext.Book
             .Where(b => b.CategoryId == categoryId)
             .Select(b => new BookDto(
                 b.Id,
@@ -77,5 +79,39 @@ public sealed class BookService
                 b.CategoryId
             ))
             .ToList();
+    }
+    public BookDto? AddBook(int categoryId,CreateBookRequest request)
+    {
+        Category? category = _dbContext.Category.FirstOrDefault(c=>c.Id == categoryId);
+        if(category == null)
+        {
+            return null;
+        }
+        Book? book = _dbContext.Book.FirstOrDefault(b => b.BookName == request.BookName
+                                                         && b.AuthorName == request.AuthorName
+                                                         && b.PublisherName == request.PublisherName
+                                                         && b.BookPrice == request.BookPrice);
+        if(book is not null)
+        {
+            return null;
+        }
+        book = new Book
+        {
+            BookName = request.BookName,
+            AuthorName = request.AuthorName,
+            PublisherName = request.PublisherName,
+            BookPrice = request.BookPrice,
+            CategoryId = categoryId,
+            
+        };
+        _dbContext.Add(book);
+        _dbContext.SaveChanges();
+        return new BookDto(book.Id,
+            book.BookName,
+            book.AuthorName,
+            book.PublisherName,
+            book.BookPrice,
+            book.CategoryId);
+           ;
     }
 }

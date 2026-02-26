@@ -5,7 +5,7 @@ namespace LibraryManagementSystem.Persistence;
 public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     : DbContext(options)
 {
-    public DbSet<Book> Books => Set<Book>();
+    public DbSet<Book> Book => Set<Book>();
     public DbSet<Member> Member => Set<Member>();
     public DbSet<Category> Category => Set<Category>();
     public DbSet<BookIssue> BookIssue => Set<BookIssue>();
@@ -13,9 +13,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Book>()
-            .ToTable("Book")
             .HasOne(b => b.Category)
-            .WithMany()
+            .WithMany(c => c.Book)  
             .HasForeignKey(b => b.CategoryId);
 
         builder.Entity<BookIssue>()

@@ -1,4 +1,5 @@
 ﻿using LibraryManagementSystem.Core.Dtos;
+using LibraryManagementSystem.Core.Requests;
 using LibraryManagementSystem.Services.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -18,6 +19,7 @@ public static class BookEndpoints
         bookGroup.MapGet("{id:int}", GetBookById);
         searchGroup.MapGet("{keyword}", GetAllSearch);
         categoryGroup.MapGet("{categoryId:int}/books", GetCategoryBooks);
+        bookGroup.MapPost("category/{categoryId:int}", AddBook);
 
 
         return endpoints;
@@ -46,5 +48,11 @@ public static class BookEndpoints
     private static Ok<IEnumerable<BookDto>> GetCategoryBooks(BookService service, int categoryId)
     {
         return TypedResults.Ok(service.GetAllByCategory(categoryId));
+    }
+    
+    public static IResult AddBook(BookService service, int categoryId,CreateBookRequest request)
+    {
+        BookDto? book  = service.AddBook(categoryId, request);
+        return book is null ? TypedResults.NotFound() : TypedResults.Ok(book);
     }
 }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LibraryManagementSystem.Persistence")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0b5b7c50f10436b358a506bc2f65569d5565bd08")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3dcceb623595b389f96c448b3ef1782d3291e376")]
 [assembly: System.Reflection.AssemblyProductAttribute("LibraryManagementSystem.Persistence")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LibraryManagementSystem.Persistence")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

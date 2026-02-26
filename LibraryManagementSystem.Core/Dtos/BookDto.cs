@@ -2,9 +2,9 @@
 
 public sealed class BookDto(
     int bId,
-    string bName,
-    string bAuthorName,
-    string bPublisherName,
+    string? bName,
+    string? bAuthorName,
+    string? bPublisherName,
     decimal bBookPrice,
     int bCategoryId)
 {

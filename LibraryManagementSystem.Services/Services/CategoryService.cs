@@ -41,12 +41,12 @@ public sealed class CategoryService
     public CategoryWithBooksDto? GetCategory(int id)
     {
         var category = _dbContext.Category
-            .Include(c => c.Books)
+            .Include(c => c.Book)
             .FirstOrDefault(c => c.Id == id);
 
         if (category is null) return null;
 
-        var books = category.Books.Select(b => new BookDto
+        var books = category.Book.Select(b => new BookDto
                 (b.Id, b.BookName, b.AuthorName, b.PublisherName, b.BookPrice, category.Id))
             .ToList()
             .ToImmutableList();
