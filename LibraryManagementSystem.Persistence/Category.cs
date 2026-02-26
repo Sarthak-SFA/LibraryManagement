@@ -4,5 +4,5 @@ public class Category
 {
     public int Id { get; set; }
     public required string CategoryType { get; set; }
-    public IList<Book> Books { get; init; } = []; 
+    public IList<Book> Books { get; init; } = [];
 }

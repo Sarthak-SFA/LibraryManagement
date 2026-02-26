@@ -16,7 +16,7 @@ public sealed class BookDto(
 
     public string? PublisherName { get; } = bPublisherName;
 
-    public decimal BookPrice { get;} = bBookPrice;
+    public decimal BookPrice { get; } = bBookPrice;
 
     public int CategoryId { get; } = bCategoryId;
 }

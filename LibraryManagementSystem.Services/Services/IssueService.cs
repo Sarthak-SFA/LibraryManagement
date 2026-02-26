@@ -1,5 +1,4 @@
 ﻿using LibraryManagementSystem.Core.Dtos;
-using LibraryManagementSystem.Core.Request;
 using LibraryManagementSystem.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +10,10 @@ public sealed class IssueService
 
     public IssueService(AppDbContext dbContext)
     {
-        _dbContext = dbContext?? throw new ArgumentNullException(nameof(dbContext)); 
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
-    
-     public IEnumerable<IssueDto> GetAll()
+
+    public IEnumerable<IssueDto> GetAll()
     {
         return _dbContext.BookIssue
             .Include(x => x.Book)

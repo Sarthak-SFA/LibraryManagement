@@ -9,12 +9,12 @@ public static class MemberEndpoints
     public static IEndpointRouteBuilder MapMemberEndpoints(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
-        
-        RouteGroupBuilder memberGroup = endpoints.MapMasterGroup().MapGroup("Members");
-       
 
-        memberGroup.MapGet("", GetAllMembers);                   
-        memberGroup.MapGet("{id:int}", GetMemberById);           
+        var memberGroup = endpoints.MapMasterGroup().MapGroup("Members");
+
+
+        memberGroup.MapGet("", GetAllMembers);
+        memberGroup.MapGet("{id:int}", GetMemberById);
         memberGroup.MapGet("type/{memberType}", GetMembersByType);
 
         return endpoints;

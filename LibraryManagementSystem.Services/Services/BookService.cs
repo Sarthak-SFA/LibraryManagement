@@ -63,6 +63,7 @@ public sealed class BookService
             ))
             .ToList();
     }
+
     public IEnumerable<BookDto> GetAllByCategory(int categoryId)
     {
         return _dbContext.Books
@@ -77,4 +78,4 @@ public sealed class BookService
             ))
             .ToList();
     }
-};
+}

@@ -9,12 +9,12 @@ public static class CategoryEndpoints
     public static IEndpointRouteBuilder MapCategoryEndpoints(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
-        RouteGroupBuilder categorygroup = endpoints.MapMasterGroup().MapGroup("Categories");
+        var categorygroup = endpoints.MapMasterGroup().MapGroup("Categories");
 
         categorygroup.MapGet("", GetAllCategories);
         //categorygroup.MapGet("{id:int}", GetCategoryById);
         categorygroup.MapGet("{id:int}", GetCategory);
-        
+
 
         return endpoints;
     }
@@ -33,13 +33,11 @@ public static class CategoryEndpoints
 
         return TypedResults.Ok(category);
     }*/
-    
+
     private static IResult GetCategory(CategoryService service, int id)
     {
-        CategoryWithBooksDto? category = service.GetCategory(id);
+        var category = service.GetCategory(id);
 
         return category == null ? TypedResults.NotFound() : TypedResults.Ok(category);
     }
-    
-    
 }

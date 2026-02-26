@@ -1,7 +1,7 @@
-﻿using LibraryManagementSystem.Core.Dtos;
+﻿using System.Collections.Immutable;
+using LibraryManagementSystem.Core.Dtos;
 using LibraryManagementSystem.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 
 namespace LibraryManagementSystem.Services.Services;
 
@@ -36,22 +36,18 @@ public sealed class CategoryService
             ))
             .FirstOrDefault();
     }
-    
-    
+
+
     public CategoryWithBooksDto? GetCategory(int id)
     {
-    
-        Category? category = _dbContext.Category
+        var category = _dbContext.Category
             .Include(c => c.Books)
             .FirstOrDefault(c => c.Id == id);
 
-        if (category is null)
-        {
-            return null;
-        }
+        if (category is null) return null;
 
-        ImmutableList<BookDto> books = category.Books.Select(b => new BookDto
-                (b.Id, b.BookName, b.AuthorName,b.PublisherName,b.BookPrice,category.Id))
+        var books = category.Books.Select(b => new BookDto
+                (b.Id, b.BookName, b.AuthorName, b.PublisherName, b.BookPrice, category.Id))
             .ToList()
             .ToImmutableList();
 
