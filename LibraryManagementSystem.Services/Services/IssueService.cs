@@ -1,4 +1,5 @@
-﻿using LibraryManagementSystem.Core.Dtos;
+﻿using System.Collections.ObjectModel;
+using LibraryManagementSystem.Core.Dtos;
 using LibraryManagementSystem.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ public sealed class IssueService
 
     public IEnumerable<IssueDto> GetAll()
     {
-        return _dbContext.BookIssue
+        IList<IssueDto> bookissue = _dbContext.BookIssue
             .Include(x => x.Book)
             .Include(x => x.Member)
             .Select(x => new IssueDto(
@@ -27,6 +28,7 @@ public sealed class IssueService
                 x.RenewDate,
                 x.RenewReturnDate
             ))
-            .ToList();
+            .ToArray();
+        return new ReadOnlyCollection<IssueDto>(bookissue);
     }
 }

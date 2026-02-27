@@ -10,7 +10,7 @@ public static class IssueEndpoints
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
-        var issueGroup = endpoints.MapMasterGroup().MapGroup("issues");
+        IEndpointRouteBuilder issueGroup = endpoints.MapMasterGroup().MapGroup("issues");
 
         issueGroup.MapGet("", GetAllIssuedBooks);
 

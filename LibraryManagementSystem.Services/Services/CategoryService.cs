@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using LibraryManagementSystem.Core.Dtos;
 using LibraryManagementSystem.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -17,16 +18,17 @@ public sealed class CategoryService
 
     public IEnumerable<CategoryDto> GetAll()
     {
-        return _dbContext.Category
+     IList<CategoryDto> category = _dbContext.Category
             .Select(c => new CategoryDto(
                 c.Id,
                 c.CategoryType
             ))
-            .ToList();
+            .ToArray();
+     return new ReadOnlyCollection<CategoryDto>(category);
     }
 
 
-    public CategoryDto? GetById(int id)
+  /*  public CategoryDto? GetById(int id)
     {
         return _dbContext.Category
             .Where(c => c.Id == id)
@@ -35,22 +37,25 @@ public sealed class CategoryService
                 c.CategoryType
             ))
             .FirstOrDefault();
-    }
+    }*/
 
 
     public CategoryWithBooksDto? GetCategory(int id)
     {
-        var category = _dbContext.Category
+        Category? category = _dbContext.Category
             .Include(c => c.Book)
             .FirstOrDefault(c => c.Id == id);
 
-        if (category is null) return null;
-
-        var books = category.Book.Select(b => new BookDto
+        if (category is null)
+        {
+             return null;
+        }
+        
+        ImmutableList<BookDto> books = category.Book.Select(b => new BookDto
                 (b.Id, b.BookName, b.AuthorName, b.PublisherName, b.BookPrice, category.Id))
             .ToList()
             .ToImmutableList();
-
+        
         CategoryWithBooksDto dto = new(category.Id, category.CategoryType, books);
 
         return dto;

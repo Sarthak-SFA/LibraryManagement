@@ -1,6 +1,9 @@
-﻿using LibraryManagementSystem.Core.Dtos;
+﻿using System.Collections.ObjectModel;
+using LibraryManagementSystem.Core.Dtos;
 using LibraryManagementSystem.Persistence;
 using Microsoft.EntityFrameworkCore;
+
+using Microsoft.Extensions.Logging;
 
 using LibraryManagementSystem.Core.Requests;
 
@@ -9,15 +12,18 @@ namespace LibraryManagementSystem.Services.Services;
 public sealed class BookService
 {
     private readonly AppDbContext _dbContext;
+    private readonly ILogger<BookService> _logger;
 
-    public BookService(AppDbContext dbContext)
+    public BookService(AppDbContext dbContext, ILogger<BookService> logger)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _logger = logger;
+
     }
 
     public IEnumerable<BookDto> GetAll()
     {
-        return _dbContext.Book
+        IList<BookDto> books = _dbContext.Book
             .Include(b => b.Category)
             .Select(b => new BookDto(
                 b.Id,
@@ -27,7 +33,9 @@ public sealed class BookService
                 b.BookPrice,
                 b.CategoryId
             ))
-            .ToList();
+            .ToArray();
+
+        return new ReadOnlyCollection<BookDto>(books);
     }
 
     public BookDto? GetById(int id)
@@ -50,11 +58,11 @@ public sealed class BookService
     {
         keyword = keyword.ToLower();
 
-        return _dbContext.Book
+        IList<BookDto> books = _dbContext.Book
             .Include(b => b.Category)
             .Where(b =>
-                b.BookName.ToLower().Contains(keyword) ||
-                b.AuthorName.ToLower().Contains(keyword))
+                b.BookName!.ToLower().Contains(keyword) ||
+                b.AuthorName!.ToLower().Contains(keyword))
             .Select(b => new BookDto(
                 b.Id,
                 b.BookName,
@@ -63,12 +71,13 @@ public sealed class BookService
                 b.BookPrice,
                 b.CategoryId
             ))
-            .ToList();
+            .ToArray();
+        return new ReadOnlyCollection<BookDto>(books);
     }
 
     public IEnumerable<BookDto> GetAllByCategory(int categoryId)
     {
-        return _dbContext.Book
+        IList<BookDto> books = _dbContext.Book
             .Where(b => b.CategoryId == categoryId)
             .Select(b => new BookDto(
                 b.Id,
@@ -78,40 +87,61 @@ public sealed class BookService
                 b.BookPrice,
                 b.CategoryId
             ))
-            .ToList();
+            .ToArray();
+        return new ReadOnlyCollection<BookDto>(books);
     }
-    public BookDto? AddBook(int categoryId,CreateBookRequest request)
+
+    public BookDto? AddBook(int categoryId, CreateBookRequest request)
     {
-        Category? category = _dbContext.Category.FirstOrDefault(c=>c.Id == categoryId);
-        if(category == null)
+        try
         {
-            return null;
+            Category? category = _dbContext.Category.FirstOrDefault(c => c.Id == categoryId);
+            if (category == null)
+            {
+                return null;
+            }
+
+            Book? book = _dbContext.Book.FirstOrDefault(b => b.BookName == request.BookName
+                                                             && b.AuthorName == request.AuthorName
+                                                             && b.PublisherName == request.PublisherName
+                                                             && b.BookPrice == request.BookPrice);
+            if (book is not null)
+            {
+                throw new ConflictException($"Book with CategoryId {categoryId} already exists.");
+            }
+
+            book = new Book
+            {
+                BookName = request.BookName,
+                AuthorName = request.AuthorName,
+                PublisherName = request.PublisherName,
+                BookPrice = request.BookPrice,
+                CategoryId = categoryId,
+
+            };
+
+            _dbContext.Add(book);
+            _dbContext.SaveChanges();
+
+            return new BookDto(book.Id,
+                book.BookName,
+                book.AuthorName,
+                book.PublisherName,
+                book.BookPrice,
+                book.CategoryId);
         }
-        Book? book = _dbContext.Book.FirstOrDefault(b => b.BookName == request.BookName
-                                                         && b.AuthorName == request.AuthorName
-                                                         && b.PublisherName == request.PublisherName
-                                                         && b.BookPrice == request.BookPrice);
-        if(book is not null)
+        catch (ConflictException ex)
         {
-            return null;
+            _logger.LogError(ex,
+                "Error while adding a book with name {BookName}. Problem in execution of sql query.",
+                request.BookName);
         }
-        book = new Book
+        catch (Exception e)
         {
-            BookName = request.BookName,
-            AuthorName = request.AuthorName,
-            PublisherName = request.PublisherName,
-            BookPrice = request.BookPrice,
-            CategoryId = categoryId,
-            
-        };
-        _dbContext.Add(book);
-        _dbContext.SaveChanges();
-        return new BookDto(book.Id,
-            book.BookName,
-            book.AuthorName,
-            book.PublisherName,
-            book.BookPrice,
-            book.CategoryId);
-           ;
+            _logger.LogError(e, "Error while adding book with the name {@book}.", request);
+        }
+        return null;
     }
+
+
 }

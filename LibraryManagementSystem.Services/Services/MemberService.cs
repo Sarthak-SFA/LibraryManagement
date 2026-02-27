@@ -1,26 +1,31 @@
-﻿using LibraryManagementSystem.Core.Dtos;
+﻿using System.Collections.ObjectModel;
+using LibraryManagementSystem.Core.Dtos;
 using LibraryManagementSystem.Persistence;
+using Microsoft.Extensions.Logging;
 
 namespace LibraryManagementSystem.Services.Services;
 
 public sealed class MemberService
 {
     private readonly AppDbContext _dbContext;
+    private readonly ILogger<MemberService> _logger;
 
-    public MemberService(AppDbContext dbContext)
+    public MemberService(AppDbContext dbContext , ILogger<MemberService> logger)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        _logger = logger;
     }
 
     public IEnumerable<MemberDto> GetAll()
     {
-        return _dbContext.Member
+        IList<MemberDto> member = _dbContext.Member
             .Select(m => new MemberDto(
                 m.Id,
                 m.MemberName,
                 m.MemberType
             ))
-            .ToList();
+            .ToArray();
+        return new ReadOnlyCollection<MemberDto>(member);
     }
 
     public MemberDto? GetById(int id)
@@ -38,13 +43,14 @@ public sealed class MemberService
 
     public IEnumerable<MemberDto> GetByType(string memberType)
     {
-        return _dbContext.Member
+        IList<MemberDto> member = _dbContext.Member
             .Where(m => m.MemberType == memberType)
             .Select(m => new MemberDto(
                 m.Id,
                 m.MemberName,
                 m.MemberType
             ))
-            .ToList();
+            .ToArray();
+        return new ReadOnlyCollection<MemberDto>(member);
     }
 }

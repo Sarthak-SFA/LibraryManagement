@@ -11,9 +11,9 @@ public static class BookEndpoints
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
-        var bookGroup = endpoints.MapMasterGroup().MapGroup("Books");
-        var searchGroup = endpoints.MapMasterGroup().MapGroup("Search");
-        var categoryGroup = endpoints.MapMasterGroup().MapGroup("categories");
+        IEndpointRouteBuilder bookGroup = endpoints.MapMasterGroup().MapGroup("Books");
+        RouteGroupBuilder searchGroup = endpoints.MapMasterGroup().MapGroup("Search");
+        RouteGroupBuilder categoryGroup = endpoints.MapMasterGroup().MapGroup("categories");
 
         bookGroup.MapGet("", GetAllBooks);
         bookGroup.MapGet("{id:int}", GetBookById);
@@ -32,12 +32,10 @@ public static class BookEndpoints
 
     private static IResult GetBookById(BookService service, int id)
     {
-        var book = service.GetById(id);
+        BookDto? book = service.GetById(id);
 
-        if (book is null)
-            return TypedResults.NotFound();
-
-        return TypedResults.Ok(book);
+       return book == null ? TypedResults.NotFound():
+       TypedResults.Ok(book);
     }
 
     private static Ok<IEnumerable<BookDto>> GetAllSearch(BookService service, string keyword)
@@ -53,6 +51,6 @@ public static class BookEndpoints
     public static IResult AddBook(BookService service, int categoryId,CreateBookRequest request)
     {
         BookDto? book  = service.AddBook(categoryId, request);
-        return book is null ? TypedResults.NotFound() : TypedResults.Ok(book);
+        return book == null ? TypedResults.NotFound() : TypedResults.Ok(book);
     }
 }

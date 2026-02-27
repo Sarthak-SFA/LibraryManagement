@@ -23,10 +23,13 @@ builder.Services
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 
 app.UseHttpsRedirection();
-var apiGroup = app.MapGroup("api");
+RouteGroupBuilder apiGroup = app.MapGroup("api");
 // /api/master/books
 apiGroup.MapIssueEndpoints()
     .MapBookEndpoints()
