@@ -2,8 +2,8 @@
 
 public sealed class IssueDto(
     int xId,
-    string name,
-    string memberName,
+    string? name,
+    string? memberName,
     DateTime xIssueDate,
     DateTime? xReturnDate,
     DateTime? xRenewDate,

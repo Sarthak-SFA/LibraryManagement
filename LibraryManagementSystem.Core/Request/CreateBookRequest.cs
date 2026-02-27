@@ -1,22 +1,16 @@
 ﻿namespace LibraryManagementSystem.Core.Requests;
 
-public sealed class CreateBookRequest(
-
-    string BookName,
-    string AuthorName,
-    string PublisherName,
-    decimal BookPrice,
-    int CategoryId
-)
+public sealed class CreateBookRequest
 {
     
-    public string? BookName { get; } = BookName;
+    public string? BookName { get; init; } 
 
-    public string? AuthorName { get; } = AuthorName;
+    public string? AuthorName { get; init; }
 
-    public string? PublisherName { get; } = PublisherName;
+    public string? PublisherName { get; init; }
 
-    public decimal BookPrice { get; } = BookPrice;
+    public decimal BookPrice { get; init; } 
+    public int CategoryId { get; init; }
     
-    public int CategoryId { get; } = CategoryId;
+  
 };

@@ -10,17 +10,17 @@ public static class BookEndpoints
     public static IEndpointRouteBuilder MapBookEndpoints(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
-
+        
         IEndpointRouteBuilder bookGroup = endpoints.MapMasterGroup().MapGroup("Books");
         RouteGroupBuilder searchGroup = endpoints.MapMasterGroup().MapGroup("Search");
         RouteGroupBuilder categoryGroup = endpoints.MapMasterGroup().MapGroup("categories");
-
+        
         bookGroup.MapGet("", GetAllBooks);
         bookGroup.MapGet("{id:int}", GetBookById);
         searchGroup.MapGet("{keyword}", GetAllSearch);
         categoryGroup.MapGet("{categoryId:int}/books", GetCategoryBooks);
-        bookGroup.MapPost("category/{categoryId:int}", AddBook);
-
+        bookGroup.MapPost("category/{categoryId:int}/add", AddBook);
+        bookGroup.MapPut("{id:int}/update", UpdateBook);
 
         return endpoints;
     }
@@ -51,6 +51,12 @@ public static class BookEndpoints
     public static IResult AddBook(BookService service, int categoryId,CreateBookRequest request)
     {
         BookDto? book  = service.AddBook(categoryId, request);
+        return book == null ? TypedResults.NotFound() : TypedResults.Ok(book);
+    }
+
+    public static IResult UpdateBook(BookService service, int id, CreateBookRequest request)
+    {
+        BookDto? book = service.UpdateBook(id, request);
         return book == null ? TypedResults.NotFound() : TypedResults.Ok(book);
     }
 }

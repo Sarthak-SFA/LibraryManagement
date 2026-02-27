@@ -62,7 +62,8 @@ public sealed class BookService
             .Include(b => b.Category)
             .Where(b =>
                 b.BookName!.ToLower().Contains(keyword) ||
-                b.AuthorName!.ToLower().Contains(keyword))
+                b.AuthorName!.ToLower().Contains(keyword)||
+                b.PublisherName!.ToLower().Contains(keyword))
             .Select(b => new BookDto(
                 b.Id,
                 b.BookName,
@@ -130,17 +131,66 @@ public sealed class BookService
                 book.BookPrice,
                 book.CategoryId);
         }
+        
         catch (ConflictException ex)
         {
             _logger.LogError(ex,
                 "Error while adding a book with name {BookName}. Problem in execution of sql query.",
                 request.BookName);
         }
+        
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while adding book with the name {@book}.", request);
+            _logger.LogError(e, 
+                "Error while adding book with the name {@book}.", request);
         }
+        
         return null;
+    }
+
+    public BookDto? UpdateBook(int id, CreateBookRequest request)
+    {
+        try
+        {
+            Book? book = _dbContext.Book.Find(id);
+            if (book is null)
+            {
+                return null;
+            }
+            book.BookName = request.BookName;
+            book.AuthorName = request.AuthorName;
+            book.PublisherName = request.PublisherName;
+            book.BookPrice = request.BookPrice;
+            book.CategoryId = request.CategoryId;
+            
+            _dbContext.SaveChanges();
+            
+            
+            return new BookDto(
+                book.Id,
+                book.BookName,
+                book.AuthorName,
+                book.PublisherName,
+                book.BookPrice,
+                book.CategoryId
+                );
+        }
+        
+        
+        catch (Exception e)
+        {
+          _logger.LogError(e , "Error while updating a book with name " +
+                               "{BookName}" +
+                               "{AuthorName}" +
+                               "{PublisherName}" +
+                               "{BookPrice}.", 
+              request.BookName,
+              request.AuthorName,
+              request.PublisherName,
+              request.BookPrice);
+          
+          return null;
+        }
     }
 
 

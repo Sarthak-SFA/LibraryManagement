@@ -1,4 +1,5 @@
 ﻿using LibraryManagementSystem.Core.Dtos;
+using LibraryManagementSystem.Core.Request;
 using LibraryManagementSystem.Services.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -16,6 +17,7 @@ public static class MemberEndpoints
         memberGroup.MapGet("", GetAllMembers);
         memberGroup.MapGet("{id:int}", GetMemberById);
         memberGroup.MapGet("type/{memberType}", GetMembersByType);
+        memberGroup.MapPost("add" , AddMember);
 
         return endpoints;
     }
@@ -36,5 +38,11 @@ public static class MemberEndpoints
     private static Ok<IEnumerable<MemberDto>> GetMembersByType(MemberService service, string memberType)
     {
         return TypedResults.Ok(service.GetByType(memberType));
+    }
+
+    public static IResult AddMember(MemberService service, CreateMemberRequest request)
+    {
+        MemberDto? member = service.AddMember(request);
+        return member == null ? TypedResults.NotFound() :  TypedResults.Ok(member);
     }
 }
