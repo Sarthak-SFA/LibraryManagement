@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "EwrURq89F58=",
+  "dgSpecHash": "1Kpsdv7HuDk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Welcome\\RiderProjects\\LibraryManagementSystem\\LibraryManagementSystem.Persistence\\LibraryManagementSystem.Persistence.csproj",
+  "projectFilePath": "C:\\Users\\Welcome\\Desktop\\sarthak\\LibraryManagementSystem.Persistence\\LibraryManagementSystem.Persistence.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Welcome\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\Welcome\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
