@@ -1,5 +1,5 @@
 ﻿using LibraryManagementSystem.Core.Dtos;
-using LibraryManagementSystem.Core.Requests;
+using LibraryManagementSystem.Core.Request;
 using LibraryManagementSystem.Persistence;
 using LibraryManagementSystem.Services.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -16,6 +16,8 @@ public static class IssueEndpoints
 
         issueGroup.MapGet("", GetAllIssuedBooks);
         issueGroup.MapPost("add", AddIssueRequest);
+        issueGroup.MapPatch("renew", RenewBook); 
+        issueGroup.MapGet("return-date", GetBooksByReturnDate);
 
         return endpoints;
     }
@@ -32,6 +34,22 @@ public static class IssueEndpoints
         return bookIssue == null
             ? TypedResults.BadRequest("Unable to Create Book Issue Request")
             : TypedResults.Ok(bookIssue);
+    }
+    
+    private static IResult RenewBook(IssueService service, RenewBookRequest request)
+    {
+        IssueDto? result = service.RenewBook(request.BookId, request.MemberId);
+
+        return result == null
+            ? TypedResults.BadRequest("Unable to renew book")
+            : TypedResults.Ok(result);
+    }
+    
+    private static Ok<IEnumerable<IssueDto>> GetBooksByReturnDate(
+        IssueService service,
+        DateTime returnDate)
+    {
+        return TypedResults.Ok(service.GetBooksByReturnDate(returnDate));
     }
 
 }
