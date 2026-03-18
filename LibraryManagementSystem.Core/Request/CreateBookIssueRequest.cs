@@ -2,6 +2,6 @@
 
 public sealed class CreateBookIssueRequest
 { 
-    public int BookId { get; init; }
-    public int MemberId { get; init; }
+    public int BookId { get; set; }
+    public int MemberId { get; set; }
 }

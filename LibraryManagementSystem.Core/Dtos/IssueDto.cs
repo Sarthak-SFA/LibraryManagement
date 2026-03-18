@@ -2,24 +2,24 @@
 
 public sealed class IssueDto(
     int xId,
-    string? name,
-    string? memberName,
-    DateTime xIssueDate,
-    DateTime? xReturnDate,
-    DateTime? xRenewDate,
-    DateTime? xRenewReturnDate)
+   int? BookId,
+    int? MemberId,
+    DateOnly xIssueDate,
+    DateOnly xReturnDate,
+    DateOnly? xRenewDate,
+    DateOnly? xRenewReturnDate)
 {
     public int Id { get; } = xId;
 
-    public string? BookName { get; } = name;
+    public int? BookId { get; } = BookId;
 
-    public string? MemberName { get; } = memberName;
+    public int? MemberId { get; } = MemberId;
 
-    public DateTime IssueDate { get; } = xIssueDate;
+    public DateOnly IssueDate { get; } = xIssueDate;
 
-    public DateTime? ReturnDate { get; } = xReturnDate;
+    public DateOnly ReturnDate { get; } = xReturnDate;
 
-    public DateTime? RenewDate { get; } = xRenewDate;
+    public DateOnly? RenewDate { get; } = xRenewDate;
 
-    public DateTime? RenewReturnDate { get; } = xRenewReturnDate;
+    public DateOnly? RenewReturnDate { get; } = xRenewReturnDate;
 }

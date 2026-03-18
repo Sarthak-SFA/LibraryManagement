@@ -27,8 +27,8 @@ public sealed class IssueService
             .Include(x => x.Member)
             .Select(x => new IssueDto(
                 x.Id,
-                x.Book!.BookName,
-                x.Member!.MemberName,
+                x.Book!.Id,
+                x.Member!.Id,
                 x.IssueDate,
                 x.ReturnDate,
                 x.RenewDate,
@@ -42,90 +42,119 @@ public sealed class IssueService
     {
         try
         {
-            DateTime issueDate = DateTime.Now.Date;
-            DateTime returnDate = issueDate.AddDays(15);
+            Member? member = _dbContext.Member
+                .FirstOrDefault(m => m.Id == request.MemberId);
 
-            BookIssue? bookIssue = _dbContext.BookIssue.FirstOrDefault(bi =>
-                bi.BookId == request.BookId &&
-                bi.MemberId == request.MemberId &&
-                bi.RenewDate == null &&
-                bi.RenewReturnDate == null);
+            if (member == null)
+            {
+                throw new ConflictException($"Member with ID {request.MemberId} not found.");
+            }
 
-            if (bookIssue != null)
-                throw new Exception("This book is already issued to the member.");
+            Book? book = _dbContext.Book
+                .FirstOrDefault(b => b.Id == request.BookId);
 
-            if (!_dbContext.Member.Any(m => m.Id == request.MemberId))
-                throw new ConflictException($"Member with ID {request.MemberId} does not exist.");
+            if (book == null)
+            {
+                throw new ConflictException($"Book with ID {request.BookId} does not exist.");
+            }
 
-            bookIssue = new BookIssue
+            bool alreadyIssued = _dbContext.BookIssue
+                .Any(b => b.BookId == request.BookId &&
+                          b.MemberId == request.MemberId);
+
+            if (alreadyIssued)
+            {
+                throw new ConflictException("This member already has this book issue.");
+            }
+
+            int issuedBooksCount = _dbContext.BookIssue
+                .Count(b => b.MemberId == request.MemberId && b.ReturnDate != null);
+
+
+
+            BookIssue bookIssue = new()
             {
                 BookId = request.BookId,
                 MemberId = request.MemberId,
-                IssueDate = issueDate,
-                ReturnDate = returnDate,
+                IssueDate = DateOnly.FromDateTime(DateTime.Today),
+                ReturnDate = DateOnly.FromDateTime(DateTime.Today).AddDays(15),
                 RenewDate = null,
                 RenewReturnDate = null
+
             };
 
             _dbContext.BookIssue.Add(bookIssue);
             _dbContext.SaveChanges();
 
-            return new IssueDto(
+            IssueDto CreateBookIssue = new(
                 bookIssue.Id,
-                _dbContext.Book.FirstOrDefault(b => b.Id == bookIssue.BookId)?.BookName,
-                _dbContext.Member.FirstOrDefault(m => m.Id == bookIssue.MemberId)?.MemberName,
+                book.Id,
+                member.Id,
                 bookIssue.IssueDate,
+
                 bookIssue.ReturnDate,
                 bookIssue.RenewDate,
                 bookIssue.RenewReturnDate
             );
+
+            return CreateBookIssue;
         }
         catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Error while creating a Book.");
+            _logger.LogError(ex,
+                "Error while creating Book Issue for MemberId {MemberId} and BookId {BookId}.",
+                request.MemberId, request.BookId);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while creating a BookIssue.");
+            _logger.LogError(e,
+                "Error while creating Book Issue.");
         }
 
         return null;
     }
-    
-    public IssueDto? RenewBook(int bookId, int memberId)
+
+    public IssueDto? RenewBook(RenewBookRequest request)
     {
         try
         {
             BookIssue? bookIssue = _dbContext.BookIssue
                 .Include(x => x.Book)
                 .Include(x => x.Member)
-                .FirstOrDefault(bi =>
-                    bi.BookId == bookId &&
-                    bi.MemberId == memberId &&
-                    bi.ReturnDate != null);
+                .FirstOrDefault(b =>
+                    b.BookId == request.BookId &&
+                    b.MemberId == request.MemberId&&
+                b.RenewDate == null);
 
             if (bookIssue == null)
-                throw new Exception("No active issue found for this book and member.");
-
-          
-            if (bookIssue.RenewDate != null)
-                throw new Exception("Book can only be renewed once.");
-
-            if (bookIssue.ReturnDate != null)
             {
-                DateTime renewDate = bookIssue.ReturnDate.Value;
-                DateTime renewReturnDate = renewDate.AddDays(15);
-
-                bookIssue.RenewDate = renewDate;
-                bookIssue.RenewReturnDate = renewReturnDate;
+                throw new ConflictException("No issue record found for this book and member.");
             }
+
+            
+            if (bookIssue.RenewDate != null)
+            {
+                throw new ConflictException("Book is already renewed once.");
+            }
+
+            if (bookIssue.ReturnDate == null)
+            {
+                throw new ConflictException("Return date missing, cannot renew.");
+            }
+
+            
+            DateOnly renewDate = DateOnly.FromDateTime(DateTime.Today);
+            DateOnly renewReturnDate = renewDate.AddDays(15);
+
+            bookIssue.RenewDate = renewDate;
+            bookIssue.RenewReturnDate = renewReturnDate;
 
             _dbContext.SaveChanges();
 
             return new IssueDto(
                 bookIssue.Id,
-                bookIssue.Book?.BookName,
-                bookIssue.Member?.MemberName,
+                bookIssue.Book!.Id,
+                bookIssue.Member!.Id,
                 bookIssue.IssueDate,
                 bookIssue.ReturnDate,
                 bookIssue.RenewDate,
@@ -134,29 +163,11 @@ public sealed class IssueService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error while renewing book.");
+            _logger.LogError(e,
+                "Error while renewing book for MemberId {MemberId} and BookId {BookId}",
+                request.MemberId, request.BookId);
         }
 
         return null;
-    }
-    
-    public IEnumerable<IssueDto> GetBooksByReturnDate(DateTime returnDate)
-    {
-        IList<IssueDto> books = _dbContext.BookIssue
-            .Include(x => x.Book)
-            .Include(x => x.Member)
-            .Where(x => x.ReturnDate != null && x.ReturnDate.Value.Date == returnDate.Date)
-            .Select(x => new IssueDto(
-                x.Id,
-                x.Book!.BookName,
-                x.Member!.MemberName,
-                x.IssueDate,
-                x.ReturnDate,
-                x.RenewDate,
-                x.RenewReturnDate
-            ))
-            .ToArray();
-
-        return new ReadOnlyCollection<IssueDto>(books);
     }
 }
