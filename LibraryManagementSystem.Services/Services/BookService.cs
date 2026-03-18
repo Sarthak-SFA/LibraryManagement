@@ -193,5 +193,17 @@ public sealed class BookService
         }
     }
 
+    public void DeleteBook(int id)
+    {
+        Book? book = _dbContext.Book.Find(id);
+        if (book is null)
+        {
+            throw new KeyNotFoundException($"Book with id {id} not found.");
+        }
+        
+        _dbContext.Book.Remove(book);
+        _dbContext.SaveChanges();
+    }
+    
 
 }

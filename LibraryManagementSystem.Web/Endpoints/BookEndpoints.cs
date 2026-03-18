@@ -21,6 +21,7 @@ public static class BookEndpoints
         categoryGroup.MapGet("{categoryId:int}/books", GetCategoryBooks);
         bookGroup.MapPost("category/{categoryId:int}/add", AddBook);
         bookGroup.MapPut("{id:int}/update", UpdateBook);
+        bookGroup.MapDelete("{id:int}/delete", DeleteBook);
 
         return endpoints;
     }
@@ -58,5 +59,18 @@ public static class BookEndpoints
     {
         BookDto? book = service.UpdateBook(id, request);
         return book == null ? TypedResults.NotFound() : TypedResults.Ok(book);
+    }
+
+    private static IResult DeleteBook(BookService service, int id)
+    {
+        try
+        {
+            service.DeleteBook(id);
+            return TypedResults.Ok();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return TypedResults.NotFound();
+        }
     }
 }
