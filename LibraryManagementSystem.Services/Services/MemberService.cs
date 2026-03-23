@@ -11,7 +11,7 @@ public sealed class MemberService
     private readonly AppDbContext _dbContext;
     private readonly ILogger<MemberService> _logger;
 
-    public MemberService(AppDbContext dbContext , ILogger<MemberService> logger)
+    public MemberService(AppDbContext dbContext, ILogger<MemberService> logger)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _logger = logger;
@@ -58,17 +58,16 @@ public sealed class MemberService
         return new ReadOnlyCollection<MemberDto>(member);
     }
 
-    public MemberDto? AddMember( CreateMemberRequest request)
+    public MemberDto? AddMember(CreateMemberRequest request)
     {
         try
         {
-            Member? member = _dbContext.Member.FirstOrDefault(m =>
-                m.MemberName == request.MemberName && m.MemberType == request.MemberType && m.MemberTypeID == request.MemberTypeID);
-            
+            var member = _dbContext.Member.FirstOrDefault(m =>
+                m.MemberName == request.MemberName && m.MemberType == request.MemberType &&
+                m.MemberTypeID == request.MemberTypeID);
+
             if (member is not null)
-            {
                 throw new ConflictException($"Member with name {request.MemberName} already exists.");
-            }
 
             member = new Member
             {
@@ -94,12 +93,12 @@ public sealed class MemberService
         }
         catch (Exception e)
         {
-            _logger.LogError (e,
+            _logger.LogError(e,
                 "Error while adding member with name {@member}.}",
                 request
-                );
+            );
         }
+
         return null;
     }
-    
 }

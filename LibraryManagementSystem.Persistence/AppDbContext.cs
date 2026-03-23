@@ -14,17 +14,17 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     {
         builder.Entity<Book>()
             .HasOne(b => b.Category)
-            .WithMany(c => c.Book)  
+            .WithMany(c => c.Book)
             .HasForeignKey(b => b.CategoryId);
 
         builder.Entity<BookIssue>()
             .HasOne(b => b.Book)
-            .WithMany(b=> b.BookIssued)
+            .WithMany(b => b.BookIssued)
             .HasForeignKey(b => b.BookId);
 
         builder.Entity<BookIssue>()
             .HasOne(b => b.Member)
-            .WithMany(b=> b.BookIssued)
+            .WithMany(b => b.BookIssued)
             .HasForeignKey(b => b.MemberId);
     }
 }

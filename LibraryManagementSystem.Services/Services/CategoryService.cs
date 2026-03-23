@@ -18,44 +18,41 @@ public sealed class CategoryService
 
     public IEnumerable<CategoryDto> GetAll()
     {
-     IList<CategoryDto> category = _dbContext.Category
+        IList<CategoryDto> category = _dbContext.Category
             .Select(c => new CategoryDto(
                 c.Id,
                 c.CategoryType
             ))
             .ToArray();
-     return new ReadOnlyCollection<CategoryDto>(category);
+        return new ReadOnlyCollection<CategoryDto>(category);
     }
 
 
-  /*  public CategoryDto? GetById(int id)
-    {
-        return _dbContext.Category
-            .Where(c => c.Id == id)
-            .Select(c => new CategoryDto(
-                c.Id,
-                c.CategoryType
-            ))
-            .FirstOrDefault();
-    }*/
+    /*  public CategoryDto? GetById(int id)
+      {
+          return _dbContext.Category
+              .Where(c => c.Id == id)
+              .Select(c => new CategoryDto(
+                  c.Id,
+                  c.CategoryType
+              ))
+              .FirstOrDefault();
+      }*/
 
 
     public CategoryWithBooksDto? GetCategory(int id)
     {
-        Category? category = _dbContext.Category
+        var category = _dbContext.Category
             .Include(c => c.Book)
             .FirstOrDefault(c => c.Id == id);
 
-        if (category is null)
-        {
-             return null;
-        }
-        
-        ImmutableList<BookDto> books = category.Book.Select(b => new BookDto
+        if (category is null) return null;
+
+        var books = category.Book.Select(b => new BookDto
                 (b.Id, b.BookName, b.AuthorName, b.PublisherName, b.BookPrice, category.Id))
             .ToList()
             .ToImmutableList();
-        
+
         CategoryWithBooksDto dto = new(category.Id, category.CategoryType, books);
 
         return dto;

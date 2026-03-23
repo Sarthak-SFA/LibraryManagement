@@ -10,11 +10,11 @@ public static class BookEndpoints
     public static IEndpointRouteBuilder MapBookEndpoints(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
-        
+
         IEndpointRouteBuilder bookGroup = endpoints.MapMasterGroup().MapGroup("Books");
-        RouteGroupBuilder searchGroup = endpoints.MapMasterGroup().MapGroup("Search");
-        RouteGroupBuilder categoryGroup = endpoints.MapMasterGroup().MapGroup("categories");
-        
+        var searchGroup = endpoints.MapMasterGroup().MapGroup("Search");
+        var categoryGroup = endpoints.MapMasterGroup().MapGroup("categories");
+
         bookGroup.MapGet("", GetAllBooks);
         bookGroup.MapGet("{id:int}", GetBookById);
         searchGroup.MapGet("{keyword}", GetAllSearch);
@@ -33,10 +33,9 @@ public static class BookEndpoints
 
     private static IResult GetBookById(BookService service, int id)
     {
-        BookDto? book = service.GetById(id);
+        var book = service.GetById(id);
 
-       return book == null ? TypedResults.NotFound():
-       TypedResults.Ok(book);
+        return book == null ? TypedResults.NotFound() : TypedResults.Ok(book);
     }
 
     private static Ok<IEnumerable<BookDto>> GetAllSearch(BookService service, string keyword)
@@ -48,16 +47,16 @@ public static class BookEndpoints
     {
         return TypedResults.Ok(service.GetAllByCategory(categoryId));
     }
-    
-    public static IResult AddBook(BookService service, int categoryId,CreateBookRequest request)
+
+    public static IResult AddBook(BookService service, int categoryId, CreateBookRequest request)
     {
-        BookDto? book  = service.AddBook(categoryId, request);
+        var book = service.AddBook(categoryId, request);
         return book == null ? TypedResults.NotFound() : TypedResults.Ok(book);
     }
 
     public static IResult UpdateBook(BookService service, int id, CreateBookRequest request)
     {
-        BookDto? book = service.UpdateBook(id, request);
+        var book = service.UpdateBook(id, request);
         return book == null ? TypedResults.NotFound() : TypedResults.Ok(book);
     }
 

@@ -2,10 +2,10 @@
 
 public sealed class IssueDto(
     int xId,
-   int? BookId,
+    int? BookId,
     int? MemberId,
-    DateOnly xIssueDate,
-    DateOnly xReturnDate,
+    DateOnly? xIssueDate,
+    DateOnly? xReturnDate,
     DateOnly? xRenewDate,
     DateOnly? xRenewReturnDate)
 {
@@ -15,9 +15,9 @@ public sealed class IssueDto(
 
     public int? MemberId { get; } = MemberId;
 
-    public DateOnly IssueDate { get; } = xIssueDate;
+    public DateOnly? IssueDate { get; } = xIssueDate;
 
-    public DateOnly ReturnDate { get; } = xReturnDate;
+    public DateOnly? ReturnDate { get; } = xReturnDate;
 
     public DateOnly? RenewDate { get; } = xRenewDate;
 

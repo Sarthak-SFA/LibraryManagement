@@ -10,7 +10,6 @@ public sealed class Book
 
     public int CategoryId { get; set; }
     public Category Category { get; set; }
-    
+
     public IList<BookIssue> BookIssued { get; set; } = [];
-    
 }

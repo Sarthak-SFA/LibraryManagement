@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using LibraryManagementSystem.Core.Dtos;
+using LibraryManagementSystem.Core.Requests;
 using LibraryManagementSystem.Persistence;
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.Extensions.Logging;
-
-using LibraryManagementSystem.Core.Requests;
 
 namespace LibraryManagementSystem.Services.Services;
 
@@ -18,7 +16,6 @@ public sealed class BookService
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _logger = logger;
-
     }
 
     public IEnumerable<BookDto> GetAll()
@@ -62,7 +59,7 @@ public sealed class BookService
             .Include(b => b.Category)
             .Where(b =>
                 b.BookName!.ToLower().Contains(keyword) ||
-                b.AuthorName!.ToLower().Contains(keyword)||
+                b.AuthorName!.ToLower().Contains(keyword) ||
                 b.PublisherName!.ToLower().Contains(keyword))
             .Select(b => new BookDto(
                 b.Id,
@@ -96,20 +93,14 @@ public sealed class BookService
     {
         try
         {
-            Category? category = _dbContext.Category.FirstOrDefault(c => c.Id == categoryId);
-            if (category == null)
-            {
-                return null;
-            }
+            var category = _dbContext.Category.FirstOrDefault(c => c.Id == categoryId);
+            if (category == null) return null;
 
-            Book? book = _dbContext.Book.FirstOrDefault(b => b.BookName == request.BookName
-                                                             && b.AuthorName == request.AuthorName
-                                                             && b.PublisherName == request.PublisherName
-                                                             && b.BookPrice == request.BookPrice);
-            if (book is not null)
-            {
-                throw new ConflictException($"Book with CategoryId {categoryId} already exists.");
-            }
+            var book = _dbContext.Book.FirstOrDefault(b => b.BookName == request.BookName
+                                                           && b.AuthorName == request.AuthorName
+                                                           && b.PublisherName == request.PublisherName
+                                                           && b.BookPrice == request.BookPrice);
+            if (book is not null) throw new ConflictException($"Book with CategoryId {categoryId} already exists.");
 
             book = new Book
             {
@@ -117,8 +108,7 @@ public sealed class BookService
                 AuthorName = request.AuthorName,
                 PublisherName = request.PublisherName,
                 BookPrice = request.BookPrice,
-                CategoryId = categoryId,
-
+                CategoryId = categoryId
             };
 
             _dbContext.Add(book);
@@ -131,20 +121,20 @@ public sealed class BookService
                 book.BookPrice,
                 book.CategoryId);
         }
-        
+
         catch (ConflictException ex)
         {
             _logger.LogError(ex,
                 "Error while adding a book with name {BookName}. Problem in execution of sql query.",
                 request.BookName);
         }
-        
+
         catch (Exception e)
         {
-            _logger.LogError(e, 
+            _logger.LogError(e,
                 "Error while adding book with the name {@book}.", request);
         }
-        
+
         return null;
     }
 
@@ -152,20 +142,17 @@ public sealed class BookService
     {
         try
         {
-            Book? book = _dbContext.Book.Find(id);
-            if (book is null)
-            {
-                return null;
-            }
+            var book = _dbContext.Book.Find(id);
+            if (book is null) return null;
             book.BookName = request.BookName;
             book.AuthorName = request.AuthorName;
             book.PublisherName = request.PublisherName;
             book.BookPrice = request.BookPrice;
             book.CategoryId = request.CategoryId;
-            
+
             _dbContext.SaveChanges();
-            
-            
+
+
             return new BookDto(
                 book.Id,
                 book.BookName,
@@ -173,37 +160,32 @@ public sealed class BookService
                 book.PublisherName,
                 book.BookPrice,
                 book.CategoryId
-                );
+            );
         }
-        
-        
+
+
         catch (Exception e)
         {
-          _logger.LogError(e , "Error while updating a book with name " +
-                               "{BookName}" +
-                               "{AuthorName}" +
-                               "{PublisherName}" +
-                               "{BookPrice}.", 
-              request.BookName,
-              request.AuthorName,
-              request.PublisherName,
-              request.BookPrice);
-          
-          return null;
+            _logger.LogError(e, "Error while updating a book with name " +
+                                "{BookName}" +
+                                "{AuthorName}" +
+                                "{PublisherName}" +
+                                "{BookPrice}.",
+                request.BookName,
+                request.AuthorName,
+                request.PublisherName,
+                request.BookPrice);
+
+            return null;
         }
     }
 
     public void DeleteBook(int id)
     {
-        Book? book = _dbContext.Book.Find(id);
-        if (book is null)
-        {
-            throw new KeyNotFoundException($"Book with id {id} not found.");
-        }
-        
+        var book = _dbContext.Book.Find(id);
+        if (book is null) throw new KeyNotFoundException($"Book with id {id} not found.");
+
         _dbContext.Book.Remove(book);
         _dbContext.SaveChanges();
     }
-    
-
 }

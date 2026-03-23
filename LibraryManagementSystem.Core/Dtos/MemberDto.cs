@@ -5,10 +5,10 @@ public record MemberDto(
     string MemberName,
     string MemberType,
     int MemberTypeID
-    )
+)
 {
     public int Id { get; } = Id;
     public string? MemberName { get; } = MemberName;
     public string? MemberType { get; } = MemberType;
-    public int MemberTypeID{ get; } = MemberTypeID;
+    public int MemberTypeID { get; } = MemberTypeID;
 }

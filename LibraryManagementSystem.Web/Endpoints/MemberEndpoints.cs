@@ -10,14 +10,14 @@ public static class MemberEndpoints
     public static IEndpointRouteBuilder MapMemberEndpoints(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
-        
+
         IEndpointRouteBuilder memberGroup = endpoints.MapMasterGroup().MapGroup("Members");
 
 
         memberGroup.MapGet("", GetAllMembers);
         memberGroup.MapGet("{id:int}", GetMemberById);
         memberGroup.MapGet("type/{memberType}", GetMembersByType);
-        memberGroup.MapPost("add" , AddMember);
+        memberGroup.MapPost("add", AddMember);
 
         return endpoints;
     }
@@ -29,10 +29,9 @@ public static class MemberEndpoints
 
     private static IResult GetMemberById(MemberService service, int id)
     {
-        MemberDto? member = service.GetById(id);
+        var member = service.GetById(id);
 
-        return member == null ? TypedResults.NotFound():
-            TypedResults.Ok(member);
+        return member == null ? TypedResults.NotFound() : TypedResults.Ok(member);
     }
 
     private static Ok<IEnumerable<MemberDto>> GetMembersByType(MemberService service, string memberType)
@@ -42,7 +41,7 @@ public static class MemberEndpoints
 
     public static IResult AddMember(MemberService service, CreateMemberRequest request)
     {
-        MemberDto? member = service.AddMember(request);
-        return member == null ? TypedResults.NotFound() :  TypedResults.Ok(member);
+        var member = service.AddMember(request);
+        return member == null ? TypedResults.NotFound() : TypedResults.Ok(member);
     }
 }

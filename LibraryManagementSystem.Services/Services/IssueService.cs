@@ -17,7 +17,6 @@ public sealed class IssueService
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _logger = logger;
-
     }
 
     public IEnumerable<IssueDto> GetAll()
@@ -42,34 +41,24 @@ public sealed class IssueService
     {
         try
         {
-            Member? member = _dbContext.Member
+            var member = _dbContext.Member
                 .FirstOrDefault(m => m.Id == request.MemberId);
 
-            if (member == null)
-            {
-                throw new ConflictException($"Member with ID {request.MemberId} not found.");
-            }
+            if (member == null) throw new ConflictException($"Member with ID {request.MemberId} not found.");
 
-            Book? book = _dbContext.Book
+            var book = _dbContext.Book
                 .FirstOrDefault(b => b.Id == request.BookId);
 
-            if (book == null)
-            {
-                throw new ConflictException($"Book with ID {request.BookId} does not exist.");
-            }
+            if (book == null) throw new ConflictException($"Book with ID {request.BookId} does not exist.");
 
-            bool alreadyIssued = _dbContext.BookIssue
+            var alreadyIssued = _dbContext.BookIssue
                 .Any(b => b.BookId == request.BookId &&
                           b.MemberId == request.MemberId);
 
-            if (alreadyIssued)
-            {
-                throw new ConflictException("This member already has this book issue.");
-            }
+            if (alreadyIssued) throw new ConflictException("This member already has this book issue.");
 
-            int issuedBooksCount = _dbContext.BookIssue
+            var issuedBooksCount = _dbContext.BookIssue
                 .Count(b => b.MemberId == request.MemberId && b.ReturnDate != null);
-
 
 
             BookIssue bookIssue = new()
@@ -80,7 +69,6 @@ public sealed class IssueService
                 ReturnDate = DateOnly.FromDateTime(DateTime.Today).AddDays(15),
                 RenewDate = null,
                 RenewReturnDate = null
-
             };
 
             _dbContext.BookIssue.Add(bookIssue);
@@ -91,7 +79,6 @@ public sealed class IssueService
                 book.Id,
                 member.Id,
                 bookIssue.IssueDate,
-
                 bookIssue.ReturnDate,
                 bookIssue.RenewDate,
                 bookIssue.RenewReturnDate
@@ -118,33 +105,24 @@ public sealed class IssueService
     {
         try
         {
-            BookIssue? bookIssue = _dbContext.BookIssue
+            var bookIssue = _dbContext.BookIssue
                 .Include(x => x.Book)
                 .Include(x => x.Member)
                 .FirstOrDefault(b =>
                     b.BookId == request.BookId &&
-                    b.MemberId == request.MemberId&&
-                b.RenewDate == null);
+                    b.MemberId == request.MemberId &&
+                    b.RenewDate == null);
 
-            if (bookIssue == null)
-            {
-                throw new ConflictException("No issue record found for this book and member.");
-            }
+            if (bookIssue == null) throw new ConflictException("No issue record found for this book and member.");
 
-            
-            if (bookIssue.RenewDate != null)
-            {
-                throw new ConflictException("Book is already renewed once.");
-            }
 
-            if (bookIssue.ReturnDate == null)
-            {
-                throw new ConflictException("Return date missing, cannot renew.");
-            }
+            if (bookIssue.RenewDate != null) throw new ConflictException("Book is already renewed once.");
 
-            
-            DateOnly renewDate = DateOnly.FromDateTime(DateTime.Today);
-            DateOnly renewReturnDate = renewDate.AddDays(15);
+            if (bookIssue.ReturnDate == null) throw new ConflictException("Return date missing, cannot renew.");
+
+
+            var renewDate = DateOnly.FromDateTime(DateTime.Today);
+            var renewReturnDate = renewDate.AddDays(15);
 
             bookIssue.RenewDate = renewDate;
             bookIssue.RenewReturnDate = renewReturnDate;

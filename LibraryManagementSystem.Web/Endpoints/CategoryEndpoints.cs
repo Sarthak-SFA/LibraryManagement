@@ -32,7 +32,7 @@ public static class CategoryEndpoints
 
     private static IResult GetCategory(CategoryService service, int id)
     {
-        CategoryWithBooksDto? category = service.GetCategory(id);
+        var category = service.GetCategory(id);
 
         return category == null ? TypedResults.NotFound() : TypedResults.Ok(category);
     }
